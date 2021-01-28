@@ -1,0 +1,95 @@
+<html>
+
+<head>
+    <title>the first try</title>
+    <script src="./js/babylon.js"></script>
+    <script src="./js/babylon.max.js"></script>
+    <script src="./js/gui/babylon.gui.js"></script>
+    <style>
+        html, body {
+                overflow: hidden;
+                width   : 100%;
+                height  : 100%;
+                margin  : 0;
+                padding : 0;
+        }
+         
+        #renderCanvas {
+                width   : 100%;
+                height  : 100%;
+                touch-action: none;
+        }
+    </style>
+    </head>
+    <body>
+        <canvas id="renderCanvas"></canvas>
+        <script type="">
+            // Get the canvas DOM element
+            var canvas = document.getElementById('renderCanvas');
+            // Load the 3D engine
+            var engine = new BABYLON.Engine(canvas, true, {preserveDrawingBuffer: true, stencil: true});
+            // CreateScene function that creates and return the scene
+            var createScene = function(){
+                // Create a basic BJS Scene object
+                var scene = new BABYLON.Scene(engine);
+                // Create a FreeCamera, and set its position to {x: 0, y: 5, z: -10}
+                // var camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 5, -10), scene);
+                var camera = new BABYLON.ArcRotateCamera("ArcRotateCamera", 1, 0.8, 10, new BABYLON.Vector3(0, 0, 0), scene);
+                // Target the camera to scene origin
+                camera.setTarget(BABYLON.Vector3.Zero());
+                // Attach the camera to the canvas
+                camera.attachControl(canvas, false);
+                // Create a basic light, aiming 0, 1, 0 - meaning, to the sky
+                var light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 1, 0), scene);
+                // Create a built-in "sphere" shape; its constructor takes 6 params: name, segment, diameter, scene, updatable, sideOrientation
+                var sphere = BABYLON.Mesh.CreateSphere('sphere1', 16, 2, scene, false, BABYLON.Mesh.FRONTSIDE);
+                // Move the sphere upward 1/2 of its height
+                sphere.position.y = 1;
+                var groundMaterial = new BABYLON.StandardMaterial("groundMaterial", scene);
+                groundMaterial.diffuseColor = new BABYLON.Color3(0.1, 0.3, 0.1);
+
+                // Create a built-in "ground" shape; its constructor takes 6 params : name, width, height, subdivision, scene, updatable
+                var ground = BABYLON.Mesh.CreateGround('ground1', 6, 6, 2, scene, false);
+     
+                ground.material = groundMaterial;
+                ground.receiveShadows = true;
+                
+                
+                var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(ground);
+                
+                var text1 = new BABYLON.GUI.TextBlock();
+                text1.text = "Hello world";
+                text1.color = "green";
+                text1.fontSize =80;
+                text1.textHorizontalAlignment = 0;
+                advancedTexture.addControl(text1);
+                
+                var text2 = new BABYLON.GUI.TextBlock();
+                text2.text = "1111111";
+                text2.color = "green";
+                text2.fontSize =80;
+                text2.textHorizontalAlignment = 1;
+                advancedTexture.addControl(text2);
+                
+                var image = new BABYLON.GUI.Image("but", "./img/ski.jpg");
+                image.width = 0.2;
+                image.height = 0.2;
+                advancedTexture.addControl(image);
+
+                // Return the created scene
+                return scene;
+            }
+            // call the createScene function
+            var scene = createScene();
+            // run the render loop
+            engine.runRenderLoop(function(){
+                scene.render();
+            });
+            // the canvas/window resize event handler
+            window.addEventListener('resize', function(){
+                engine.resize();
+            });
+        </script>
+    </body>
+
+</html>
